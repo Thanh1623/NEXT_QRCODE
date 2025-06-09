@@ -140,6 +140,8 @@ const request = async <Response>(
           }
         }
       } else {
+        // day la truong hop khi ma van con access token de logout(con` han.)
+        // va` goi. api o? next js server (route handler, server component ) den server backend
         const accessToken = (options?.headers as any)?.Authorization.split(
           "Bearer "
         )[1];
