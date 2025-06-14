@@ -64,6 +64,13 @@ export const setRefreshTokenToLocalStorage = (value: string) => {
   }
 };
 
+export const removeTokensFromLocalStorage = () => {
+  if (isBrowser) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+  }
+};
+
 export const CheckAndRefreshToken = async (params?: {
   onError?: () => void;
   onSuccess?: () => void;
@@ -88,8 +95,11 @@ export const CheckAndRefreshToken = async (params?: {
   // thoi diem het han cua token tinh theo epoch time (s)
   // con khi dung new Date().getTime() thoi diem het han cua token tinh theo epoch time (ms)
   const now = Math.round(new Date().getTime() / 1000); // epoch time (s)
-  // truong hop refresh token het han thi khong xu ly nua
-  if (decodedRefreshToken.exp <= now) return;
+  // truong hop refresh token het han thi cho logout
+  if (decodedRefreshToken.exp <= now) {
+    removeTokensFromLocalStorage();
+    return params?.onError && params?.onError();
+  }
   // vi du. access token cua chung ta co thoi gian het han la 10s
   // thi` minh se kiem tra con 1/3 thoi gian (3s) thi minh se cho refresh token lai
   // Thoi gian con` lai. se dua tren cong thuc: decodedAccessToken.exp - now
