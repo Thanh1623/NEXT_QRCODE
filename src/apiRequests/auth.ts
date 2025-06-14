@@ -8,6 +8,10 @@ import {
 } from "@/schemaValidations/auth.schema";
 
 const authApiRequests = {
+  refreshTokenRequest: null as Promise<{
+    status: number;
+    payload: RefreshTokenResType;
+  }> | null,
   sLogin: (body: LoginBodyType) => http.post<LoginResType>("/auth/login", body),
   login: (body: LoginBodyType) =>
     http.post<LoginResType>("/api/auth/login", body, {
@@ -32,10 +36,22 @@ const authApiRequests = {
   sRefreshToken: (body: RefreshTokenBodyType) =>
     http.post<RefreshTokenResType>("/auth/refresh-token", body),
 
-  refreshToken: () =>
-    http.post<RefreshTokenResType>("/api/auth/refresh-token", null, {
-      baseUrl: "",
-    }),
+  // handle truong hop refresh token bi goi 2 lan lien tuc
+  async refreshToken() {
+    if (this.refreshTokenRequest) {
+      return this.refreshTokenRequest;
+    }
+    this.refreshTokenRequest = http.post<RefreshTokenResType>(
+      "/api/auth/refresh-token",
+      null,
+      {
+        baseUrl: "",
+      }
+    );
+    const result = await this.refreshTokenRequest;
+    this.refreshTokenRequest = null;
+    return result;
+  },
 };
 
 export default authApiRequests;
