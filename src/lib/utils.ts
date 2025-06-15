@@ -94,7 +94,7 @@ export const CheckAndRefreshToken = async (params?: {
   };
   // thoi diem het han cua token tinh theo epoch time (s)
   // con khi dung new Date().getTime() thoi diem het han cua token tinh theo epoch time (ms)
-  const now = Math.round(new Date().getTime() / 1000); // epoch time (s)
+  const now = new Date().getTime() / 1000 - 1; // epoch time (s)
   // truong hop refresh token het han thi cho logout
   if (decodedRefreshToken.exp <= now) {
     removeTokensFromLocalStorage();
