@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import AccountTable from '@/app/manage/accounts/account-table'
 import { Suspense } from 'react'
 
-export default function Dashboard() {
+export default function AccountPage() {
   return (
     <main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8'>
       <div className='space-y-2'>
@@ -13,7 +13,7 @@ export default function Dashboard() {
             <CardDescription>Quản lý tài khoản nhân viên</CardDescription>
           </CardHeader>
           <CardContent>
-            <Suspense>
+            <Suspense fallback={<div>Loading...</div>}>
               <AccountTable />
             </Suspense>
           </CardContent>
