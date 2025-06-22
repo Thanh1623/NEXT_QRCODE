@@ -7,12 +7,12 @@ import {
 } from "@/lib/utils";
 import { useLogoutMutation } from "@/queries/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 
-export default function LogoutPage() {
+const Logout = () => {
   const { mutateAsync } = useLogoutMutation();
   const router = useRouter();
-  const {setIsAuth} = useAppContext();
+  const { setIsAuth } = useAppContext();
   const searchParams = useSearchParams();
   const refreshTokenFromUrl = searchParams.get("refreshToken");
   const accessTokenFromUrl = searchParams.get("accessToken");
@@ -46,4 +46,12 @@ export default function LogoutPage() {
   }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setIsAuth]); // Add mutateAsync to the dependency array
 
   return <div>Log out...</div>;
+};
+
+export default function LogoutPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Logout />
+    </Suspense>
+  );
 }
