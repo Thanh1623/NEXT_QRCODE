@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppContext } from "@/components/app-provider";
 import {
   getAccessTokenFromLocalStorage,
   getRefreshTokenFromLocalStorage,
@@ -11,6 +12,7 @@ import { useEffect, useRef } from "react";
 export default function LogoutPage() {
   const { mutateAsync } = useLogoutMutation();
   const router = useRouter();
+  const {setIsAuth} = useAppContext();
   const searchParams = useSearchParams();
   const refreshTokenFromUrl = searchParams.get("refreshToken");
   const accessTokenFromUrl = searchParams.get("accessToken");
@@ -35,12 +37,13 @@ export default function LogoutPage() {
           // Clear the ref after 1 second
           ref.current = null; // Reset the ref to null
         }, 1000);
+        setIsAuth(false);
         router.push("/login");
       });
     } else {
       router.push("/");
     }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl]); // Add mutateAsync to the dependency array
+  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setIsAuth]); // Add mutateAsync to the dependency array
 
   return <div>Log out...</div>;
 }
