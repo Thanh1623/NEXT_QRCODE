@@ -17,7 +17,7 @@ export const useGetDish = ({ id, enabled }: { id: number, enabled: boolean }) =>
   });
 };
 
-export const useAddAccountMutation = () => {
+export const useAddDishMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: dishApiRequest.add,
@@ -30,7 +30,7 @@ export const useAddAccountMutation = () => {
   });
 };
 
-export const useUpdateAccountMutation = () => {
+export const useUpdateDishMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -48,7 +48,7 @@ export const useUpdateAccountMutation = () => {
   });
 };
 
-export const useDeleteAccountMutation = () => {
+export const useDeleteDishMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: dishApiRequest.deleteDish,
