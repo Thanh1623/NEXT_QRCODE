@@ -43,14 +43,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { getTableLink, getVietnameseTableStatus } from "@/lib/utils";
+import {
+  getTableLink,
+  getVietnameseTableStatus,
+  handleErrorApi,
+} from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import AutoPagination from "@/components/auto-pagination";
 import { TableListResType } from "@/schemaValidations/table.schema";
 import EditTable from "@/app/manage/tables/edit-table";
 import AddTable from "@/app/manage/tables/add-table";
-import { useGetTableList } from "@/queries/useTable";
+import { useDeleteTableMutation, useGetTableList } from "@/queries/useTable";
 import QrCodeTable from "@/components/qrcode-table";
+import { toast } from "@/hooks/use-toast";
 
 type TableItem = TableListResType["data"][0];
 
@@ -73,6 +78,12 @@ export const columns: ColumnDef<TableItem>[] = [
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("number")}</div>
     ),
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      return String(row.getValue(columnId))
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    },
   },
   {
     accessorKey: "capacity",
@@ -139,6 +150,28 @@ function AlertDialogDeleteTable({
   tableDelete: TableItem | null;
   setTableDelete: (value: TableItem | null) => void;
 }) {
+  const { mutateAsync } = useDeleteTableMutation();
+  const onDeleteTable = async () => {
+    if (!tableDelete) return;
+    try {
+      await mutateAsync(tableDelete.number);
+      setTableDelete(null);
+      toast({
+        title: "Xóa bàn thành công",
+      });
+    } catch (error) {
+      console.error("Failed to delete table:", error);
+      handleErrorApi({
+        error,
+        setError: (name, error) => {
+          toast({
+            title: "Xóa bàn thất bại",
+            description: error.message,
+          });
+        },
+      });
+    }
+  };
   return (
     <AlertDialog
       open={Boolean(tableDelete)}
@@ -161,7 +194,9 @@ function AlertDialogDeleteTable({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={onDeleteTable}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
