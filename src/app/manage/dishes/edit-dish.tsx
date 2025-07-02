@@ -40,6 +40,7 @@ import useUploadMediaMutation from "@/queries/useMedia";
 import { useGetDish, useUpdateDishMutation } from "@/queries/useDish";
 import { useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
+import revalidateApiRequest from "@/apiRequests/revalidate";
 
 export default function EditDish({
   id,
@@ -111,6 +112,7 @@ export default function EditDish({
         body.image = uploadResponse.payload.data; // Assuming the response contains the URL of the uploaded image
       }
       const result = await updateDishMutation.mutateAsync(body);
+      await revalidateApiRequest("dishes");
       toast({
         description: result.payload.message,
       });
