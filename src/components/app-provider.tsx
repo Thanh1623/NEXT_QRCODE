@@ -11,9 +11,11 @@ import {
 } from "react";
 import RefreshToken from "./refresh-token";
 import {
+  decodeToken,
   getAccessTokenFromLocalStorage,
   removeTokensFromLocalStorage,
 } from "@/lib/utils";
+import { RoleType } from "@/types/jwt.types";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +28,8 @@ const queryClient = new QueryClient({
 
 const AppContext = createContext({
   isAuth: false,
-  setIsAuth: (isAuth: boolean) => {},
+  role: undefined as RoleType | undefined,
+  setRole: (role?: RoleType | undefined) => {},
 });
 
 export const useAppContext = () => {
@@ -39,26 +42,28 @@ export default function AppProvider({
   children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuth, setIsAuthState] = useState(false);
+  const [role, setRoleState] = useState<RoleType | undefined>();
   useEffect(() => {
     const accessToken = getAccessTokenFromLocalStorage();
     if (accessToken) {
-      setIsAuthState(true);
+      const role = decodeToken(accessToken).role;
+      setRoleState(role);
     }
   }, []);
   // cac ban dung react 19 va next 15 khong can dung useCallback cung duoc
-  const setIsAuth = useCallback((isAuth: boolean) => {
-    if (isAuth) {
-      setIsAuthState(true);
+  const setRole = useCallback((role?: RoleType | undefined) => {
+    if (role) {
+      setRoleState(role);
     } else {
-      setIsAuthState(false);
       removeTokensFromLocalStorage();
     }
   }, []);
+
+  const isAuth = Boolean(role);
   // neu dung react 19 next 15 khong can dung AppContext.Provider
   // chi can dung AppContext
   return (
-    <AppContext.Provider value={{ isAuth, setIsAuth }}>
+    <AppContext.Provider value={{ role, setRole, isAuth }}>
       <QueryClientProvider client={queryClient}>
         {children}
         <RefreshToken />
