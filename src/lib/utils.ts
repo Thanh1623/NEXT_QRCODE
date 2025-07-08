@@ -5,9 +5,10 @@ import { EntityError } from "./http";
 import { toast } from "@/hooks/use-toast";
 import jwt from "jsonwebtoken";
 import authApiRequests from "@/apiRequests/auth";
-import { DishStatus, OrderStatus, TableStatus } from "@/constants/type";
+import { DishStatus, OrderStatus, Role, TableStatus } from "@/constants/type";
 import envConfig from "@/config";
 import { TokenPayload } from "@/types/jwt.types";
+import guestApiRequests from "@/apiRequests/guest";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -108,7 +109,11 @@ export const CheckAndRefreshToken = async (params?: {
   ) {
     // goi api refresh token
     try {
-      const res = await authApiRequests.refreshToken();
+      const role = decodedRefreshToken.role;
+      const res =
+        role === Role.Guest
+          ? await guestApiRequests.refreshToken()
+          : await authApiRequests.refreshToken();
       setAccessTokenToLocalStorage(res.payload.data.accessToken);
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
       params?.onSuccess && params?.onSuccess();
