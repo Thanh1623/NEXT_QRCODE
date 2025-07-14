@@ -12,7 +12,7 @@ export const useGuestLogoutMutation = () => {
   });
 };
 
-export const useGetOrderMutation = () => {
+export const useGuestOrderMutation = () => {
   return useMutation({
     mutationFn: guestApiRequests.order,
   });
