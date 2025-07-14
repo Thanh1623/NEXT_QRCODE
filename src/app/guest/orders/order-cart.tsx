@@ -1,5 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 import socket from "@/lib/socket";
 import { formatCurrency, getVietnameseOrderStatus } from "@/lib/utils";
 import { useGuestOrderListQuery } from "@/queries/useGuest";
@@ -31,6 +32,13 @@ export default function OrdersCart() {
     }
 
     function onUpdateOrder(data: UpdateOrderResType["data"]) {
+      toast({
+        description: `Món ${data.dishSnapshot.name} (SL: ${
+          data.quantity
+        }) vừa được cập nhật sang trạng thái "${getVietnameseOrderStatus(
+          data.status
+        )}"`,
+      });
       refetch();
     }
 
