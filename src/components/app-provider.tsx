@@ -55,6 +55,7 @@ export default function AppProvider({
     if (role) {
       setRoleState(role);
     } else {
+      setRoleState(undefined); //cần set lại state để re-render
       removeTokensFromLocalStorage();
     }
   }, []);
