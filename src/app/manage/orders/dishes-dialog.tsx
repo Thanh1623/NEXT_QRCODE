@@ -134,7 +134,7 @@ export function DishesDialog({
       <DialogTrigger asChild>
         <Button variant="outline">Thay đổi</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] overflow-y-auto max-h-full">
         <DialogHeader>
           <DialogTitle>Chọn món ăn</DialogTitle>
         </DialogHeader>
