@@ -17,11 +17,15 @@ import {
 } from "@/lib/utils";
 import { RoleType } from "@/types/jwt.types";
 
+// default
+// staleTime: 0 // Thoi gian cache cua query, thoi gian nay se la thoi gian cache cua query, khong phai thoi gian cache cua response,
+// gc: 5 phút (5 * 1000* 60) // Thoi gian cache cua query, thoi gian nay se la thoi gian cache cua query, khong phai thoi gian cache cua response
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false, // disable refetch on window focus
-      refetchOnMount: false, // disable refetch on mount
+      // refetchOnMount: false, // disable refetch on mount
     },
   },
 });
