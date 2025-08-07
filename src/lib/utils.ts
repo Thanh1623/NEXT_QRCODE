@@ -80,6 +80,7 @@ export const removeTokensFromLocalStorage = () => {
 export const CheckAndRefreshToken = async (params?: {
   onError?: () => void;
   onSuccess?: () => void;
+  force?: boolean;
 }) => {
   // khong nen dua logic lay access token va refresh token ra khoi function `checkAndRefreshToken`
   // vi vi thoi diem checkAndRefreshToken() duoc goi thi chung ta se co mot access token va refresh token moi
@@ -106,8 +107,9 @@ export const CheckAndRefreshToken = async (params?: {
   // exp la thoi gian het han cua access token
   // thoi gian het han cua access token dua tren cong thuc: decodedAccessToken.exp - decodedAccessToken.iat
   if (
+    params?.force ||
     decodedAccessToken.exp - now <
-    (decodedAccessToken.exp - decodedAccessToken.iat) / 3
+      (decodedAccessToken.exp - decodedAccessToken.iat) / 3
   ) {
     // goi api refresh token
     try {
