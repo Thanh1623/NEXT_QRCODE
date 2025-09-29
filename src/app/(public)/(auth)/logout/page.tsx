@@ -12,7 +12,7 @@ import { Suspense, useEffect, useRef } from "react";
 const Logout = () => {
   const { mutateAsync } = useLogoutMutation();
   const router = useRouter();
-  const { setRole } = useAppContext();
+  const { setRole, disconnectSocket } = useAppContext();
   const searchParams = useSearchParams();
   const refreshTokenFromUrl = searchParams.get("refreshToken");
   const accessTokenFromUrl = searchParams.get("accessToken");
@@ -38,12 +38,20 @@ const Logout = () => {
           ref.current = null; // Reset the ref to null
         }, 1000);
         setRole();
+        disconnectSocket();
         router.push("/login");
       });
     } else {
       router.push("/");
     }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setRole]); // Add mutateAsync to the dependency array
+  }, [
+    mutateAsync,
+    router,
+    refreshTokenFromUrl,
+    accessTokenFromUrl,
+    setRole,
+    disconnectSocket,
+  ]); // Add mutateAsync to the dependency array
 
   return <div>Log out...</div>;
 };

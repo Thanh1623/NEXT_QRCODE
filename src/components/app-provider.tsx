@@ -7,15 +7,18 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import RefreshToken from "./refresh-token";
 import {
   decodeToken,
+  generateSocketInstance,
   getAccessTokenFromLocalStorage,
   removeTokensFromLocalStorage,
 } from "@/lib/utils";
 import { RoleType } from "@/types/jwt.types";
+import { Socket } from "socket.io-client";
 
 // default
 // staleTime: 0 // Thoi gian cache cua query, thoi gian nay se la thoi gian cache cua query, khong phai thoi gian cache cua response,
@@ -34,6 +37,9 @@ const AppContext = createContext({
   isAuth: false,
   role: undefined as RoleType | undefined,
   setRole: (role?: RoleType | undefined) => {},
+  socket: undefined as Socket | undefined,
+  setSocket: (socket?: Socket | undefined) => {},
+  disconnectSocket: () => {},
 });
 
 export const useAppContext = () => {
@@ -47,13 +53,24 @@ export default function AppProvider({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [role, setRoleState] = useState<RoleType | undefined>();
+  const [socket, setSocket] = useState<Socket | undefined>();
+  const count = useRef(0);
   useEffect(() => {
+    if (count.current > 0) return;
     const accessToken = getAccessTokenFromLocalStorage();
     if (accessToken) {
       const role = decodeToken(accessToken).role;
       setRoleState(role);
+      setSocket(generateSocketInstance(accessToken));
     }
+    count.current += 1;
   }, []);
+  const disconnectSocket = useCallback(() => {
+    if (socket) {
+      socket.disconnect();
+      setSocket(undefined);
+    }
+  }, [socket]);
   // cac ban dung react 19 va next 15 khong can dung useCallback cung duoc
   const setRole = useCallback((role?: RoleType | undefined) => {
     if (role) {
@@ -68,7 +85,9 @@ export default function AppProvider({
   // neu dung react 19 next 15 khong can dung AppContext.Provider
   // chi can dung AppContext
   return (
-    <AppContext.Provider value={{ role, setRole, isAuth }}>
+    <AppContext.Provider
+      value={{ role, setRole, isAuth, socket, setSocket, disconnectSocket }}
+    >
       <QueryClientProvider client={queryClient}>
         {children}
         <RefreshToken />
