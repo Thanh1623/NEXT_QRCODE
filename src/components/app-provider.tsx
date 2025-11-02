@@ -19,6 +19,7 @@ import {
 } from "@/lib/utils";
 import { RoleType } from "@/types/jwt.types";
 import { Socket } from "socket.io-client";
+import ListenLogoutSocket from "./listen-logout-socket";
 
 // default
 // staleTime: 0 // Thoi gian cache cua query, thoi gian nay se la thoi gian cache cua query, khong phai thoi gian cache cua response,
@@ -91,6 +92,7 @@ export default function AppProvider({
       <QueryClientProvider client={queryClient}>
         {children}
         <RefreshToken />
+        <ListenLogoutSocket />
         <button onClick={() => setIsOpen(!isOpen)}>{`${
           isOpen ? "Close" : "Open"
         } the devtools panel`}</button>
