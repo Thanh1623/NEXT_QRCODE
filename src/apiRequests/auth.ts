@@ -52,6 +52,9 @@ const authApiRequests = {
     this.refreshTokenRequest = null;
     return result;
   },
+
+  setTokenToCookie: (body: { accessToken: string; refreshToken: string }) =>
+    http.post("/api/auth/token", body, { baseUrl: "" }),
 };
 
 export default authApiRequests;
