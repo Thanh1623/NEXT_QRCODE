@@ -36,10 +36,15 @@ export default function OAuthPage() {
         count.current++;
       }
     } else {
-      toast({
-        title: "Đăng nhập thất bại",
-        description: message || "Vui lòng thử lại",
-      });
+      if (count.current === 0) {
+        setTimeout(() => {
+          toast({
+            title: "Đăng nhập thất bại",
+            description: message || "Vui lòng thử lại",
+          });
+        });
+        count.current++;
+      }
     }
   }, [
     accessToken,
